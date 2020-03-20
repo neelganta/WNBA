@@ -22,36 +22,40 @@ from sklearn.model_selection import GridSearchCV
 
 from collections import deque
 
-st.title('All-Time NBA Lineup Machine')
+st.title('WNBA Lineup Machine')
 # st.title('NBA Lineup Machine')
 st.markdown('_Please see left sidebar for more details._')
 
-currentStats = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/fixedAllTime.csv') #Dynasty
+currentStats = pd.read_csv('https://github.com/neelganta/neel_project/edit/master/wnba19.csv') #Dynasty
 # currentStats = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/2020stats_salary.csv') #Current
-regModel = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/githubRegression.csv')
+regModel = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/WNBAreg.csv')
 regModel = regModel.fillna(0)
 # regModel = regModel.drop(columns=['Unnamed: 0'])
 
 y = regModel['NET_RATING'] 
-X = regModel.drop(['NET_RATING'], axis =1)
+X = regModel.drop(['NET_RATING', 'MIN', 'Unnamed: 0'], axis =1)
 # Fit the model below
-model1 =  lm.LinearRegression() #higher alpha (penality parameter), fewer predictors
-model1.fit(X, y)
-model1_y = model1.predict(X)
+# model1 =  lm.LinearRegression() #higher alpha (penality parameter), fewer predictors
+# model1.fit(X, y)
+# model1_y = model1.predict(X)
+
+lasso = lm.Lasso(alpha=.1)        #higher alpha (penality parameter), fewer predictors
+lasso.fit(X, y)
+lasso_y = lasso.predict(X)
 
 players = []
 players = currentStats['Player']
 players= deque(players) 
-players.appendleft('1980-Present NBA Players') 
+players.appendleft('2019 WNBA Players') 
 # players.appendleft('2020 NBA Players') #Current
 players = list(players) 
 
 
-player1 = st.selectbox('Select first player: (Example: Type "BOS" to find all Celtics)', players)
+player1 = st.selectbox('Select first player: (Example: Type "LAS" to find all Sparks)', players)
 player2 = st.selectbox('Select second player: (Example: Type "PG" to find all Point Guards)', players)
-player3 = st.selectbox('Select third player: (Example: Type "James" to find all players with the name James)', players)
-player4 = st.selectbox('Select fourth player: (Example: Type "MVP" to find all MVP players.)', players)
-player5 = st.selectbox('Select fifth player: (Example: Type "*" to find all Hall of Fame inductees.)', players)
+player3 = st.selectbox('Select third player: (Example: Type "Alexis" to find all players with the name Alexis)', players)
+player4 = st.selectbox('Select fourth player: ', players)
+player5 = st.selectbox('Select fifth player: ', players)
 
 
 playerlist = [player1, player2, player3, player4, player5]
@@ -61,7 +65,7 @@ playerlist = [player1, player2, player3, player4, player5]
 
 
 # with st.spinner('Loading...'):
-if(player1 != '1980-Present NBA Players' and player2 != '1980-Present NBA Players' and player3 != '1980-Present NBA Players' and player4 != '1980-Present NBA Players' and player5 != '1980-Present NBA Players'):
+if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3 != '2019 WNBA Players' and player4 != '2019 WNBA Players' and player5 != '2019 WNBA Players'):
 
 # if(player1 != '2020 NBA Players' and player2 != '2020 NBA Players' and player3 != '2020 NBA Players' and player4 != '2020 NBA Players' and player5 != '2020 NBA Players'): #current
 # if(len(playerlist) > 4 and len(playerlist) < 6):
@@ -75,20 +79,20 @@ if(player1 != '1980-Present NBA Players' and player2 != '1980-Present NBA Player
     merged.drop(['Player'], axis =1)
     dictionary = merged.groupby('index').apply(lambda dfg: dfg.drop('index', axis=1).to_dict(orient='list')).to_dict()
     converted = pd.DataFrame.from_dict(dictionary, orient= 'index')
-    new_df = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
+    WNBA_converted = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
                         for i,col in converted.items()],axis = 1)
-
-    new_df.index = converted.index
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='00')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='01')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='02')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='03')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='04')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='5')))]
-    new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='6')))]
+    WNBA_converted.index = converted.index
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='5')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='6')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='7')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='8')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='9')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
 
     st.write('Lineup DataFrame:')
-    st.write(new_df)
+    st.write(WNBA_converted)
 
 #     total_salary = new_df['Salary0'] + new_df['Salary1'] + new_df['Salary2']+ new_df['Salary3']+ new_df['Salary4']
 #     total_salary = int(total_salary)
@@ -130,20 +134,19 @@ if(player1 != '1980-Present NBA Players' and player2 != '1980-Present NBA Player
             merged.drop(['Player'], axis =1)
             dictionary = merged.groupby('index').apply(lambda dfg: dfg.drop('index', axis=1).to_dict(orient='list')).to_dict()
             converted = pd.DataFrame.from_dict(dictionary, orient= 'index')
-            new_df = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
+            WNBA_converted = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
                                 for i,col in converted.items()],axis = 1)
-
-            new_df.index = converted.index
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='00')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='01')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='02')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='03')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='04')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='5')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='6')))]
-            new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='Player')))]
+            WNBA_converted.index = converted.index
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='5')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='6')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='7')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='8')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='9')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
 #             new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='Salary')))]
-            user_pred = model1.predict(new_df)
+            user_pred = lasso.predict(WNBA_converted)
             num = int(user_pred)
             average.append(num)
 
@@ -178,7 +181,7 @@ st.video(data = 'https://www.youtube.com/watch?v=le3cMnQ7_74&feature=youtu.be')
 st.markdown('_Presented by Neel Ganta._')
 
 st.sidebar.video(data = 'https://www.youtube.com/watch?v=le3cMnQ7_74&feature=youtu.be')
-st.sidebar.markdown('**ABOUT THE ALL-TIME NBA LINEUP MACHINE:**  After creating the _[NBA Lineup Machine](https://nba-lineup-machine.herokuapp.com)_, which allows the user to predict the Net Rating of any lineup possible in the current NBA, Neel Ganta went about to answer a different set of questions. The endless debates of who would really make the best lineup of all time can finally be put to rest. The _**All-Time NBA Lineup Machine**_ contains data for _**every**_ player since the three-point line was introduced in 1980. What if we swapped ‘85 Larry Bird for Paul Pierce on the ‘08 Celtics? What if we made a lineup of the best big men ever? What would a lineup with Kobe, MJ, and Lebron look like? Can _**you**_ create the best lineup ever? Please enjoy the _All-Time NBA Lineup Machine_ which allows you to input **any** five players in **any** of the past **40 years** of the NBA, and utilizes a machine learning algorithm to predict an overall Net Rating for the lineup in modern terms.')
+st.sidebar.markdown('**ABOUT THE WNBA LINEUP MACHINE:**  After creating the _[NBA Lineup Machine](https://nba-lineup-machine.herokuapp.com)_, which allows the user to predict the Net Rating of any lineup possible in the current NBA, Neel Ganta went about to answer a similar set of questions in regards to the WNBA. The NBA Lineup Machine was first incepted roughly one year ago while Neel Ganta was pondering the current lineup problem in the NBA. Should teams go small? Three shooters? Five? How can we see what our team would look like with a player before trading for them? Seeing a problem and no publicly available solution, Neel decided to create what could be the next big GM tool. Please enjoy the WNBA Lineup Machine which allows you to input any five players in the WNBA, and utilizes a machine learning algorithm to predict an overall Net Rating for the lineup.')
 st.sidebar.markdown('_**Poor: ** Net Rating **< 0** | **Average:** Net Rating **> 0** | **Good:** Net Rating **> 5** | **Excellent:** Net Rating **> 10** | **Hall of Fame:** Net Rating **> 20**_')
 st.sidebar.markdown('_Players, teams, and positions are searchable in the drop down selectors. For example: type "2012 to find all players in the year 2012. Type "CLE" to find all Cavaliers. Type "PG" to find all point guards. Type "James" to find all players with James in their name. Type "MVP" to find all MVPs from each year._')
 st.sidebar.markdown('_An asterisk "*" by a player name deontes a hall of fame inductee._')
