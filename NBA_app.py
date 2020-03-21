@@ -35,13 +35,13 @@ regModel = regModel.fillna(0)
 y = regModel['NET_RATING'] 
 X = regModel.drop(['NET_RATING', 'MIN', 'Unnamed: 0'], axis =1)
 # Fit the model below
-# model1 =  lm.LinearRegression() #higher alpha (penality parameter), fewer predictors
-# model1.fit(X, y)
-# model1_y = model1.predict(X)
+model1 =  lm.LinearRegression() #higher alpha (penality parameter), fewer predictors
+model1.fit(X, y)
+model1_y = model1.predict(X)
 
-lasso = lm.Lasso(alpha=.1)        #higher alpha (penality parameter), fewer predictors
-lasso.fit(X, y)
-lasso_y = lasso.predict(X)
+# lasso = lm.Lasso(alpha=.1)        #higher alpha (penality parameter), fewer predictors
+# lasso.fit(X, y)
+# lasso_y = lasso.predict(X)
 
 players = []
 players = currentStats['Player']
@@ -90,6 +90,13 @@ if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3
     WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
     WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
     WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='13')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='14')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='20')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='21')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='22')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='23')))]
+    WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='24')))]
 
     st.write('Lineup DataFrame:')
     st.write(WNBA_converted)
@@ -145,8 +152,15 @@ if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3
             WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
             WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
             WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='13')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='14')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='20')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='21')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='22')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='23')))]
+            WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='24')))]
 #             new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='Salary')))]
-            user_pred = lasso.predict(WNBA_converted)
+            user_pred = model1.predict(WNBA_converted)
             num = int(user_pred)
             average.append(num)
 
