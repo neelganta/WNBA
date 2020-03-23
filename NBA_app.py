@@ -23,14 +23,11 @@ from sklearn.model_selection import GridSearchCV
 from collections import deque
 
 st.title('WNBA Lineup Machine')
-# st.title('NBA Lineup Machine')
 st.markdown('_Please see left sidebar for more details._')
 
 currentStats = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/2019wnba.csv')#, delimiter= None, error_bad_lines=False) #Dynasty
-# currentStats = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/2020stats_salary.csv') #Current
 regModel = pd.read_csv('https://raw.githubusercontent.com/neelganta/neel_project/master/WNBAreg.csv')
 regModel = regModel.fillna(0)
-# regModel = regModel.drop(columns=['Unnamed: 0'])
 
 y = regModel['NET_RATING'] 
 X = regModel.drop(['NET_RATING', 'MIN'], axis =1)
@@ -39,15 +36,11 @@ model1 =  lm.LinearRegression() #higher alpha (penality parameter), fewer predic
 model1.fit(X, y)
 model1_y = model1.predict(X)
 
-# lasso = lm.Lasso(alpha=.1)        #higher alpha (penality parameter), fewer predictors
-# lasso.fit(X, y)
-# lasso_y = lasso.predict(X)
 
 players = []
 players = currentStats['Player']
 players= deque(players) 
 players.appendleft('2019 WNBA Players') 
-# players.appendleft('2020 NBA Players') #Current
 players = list(players) 
 
 
@@ -67,68 +60,42 @@ playerlist = [player1, player2, player3, player4, player5]
 # with st.spinner('Loading...'):
 if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3 != '2019 WNBA Players' and player4 != '2019 WNBA Players' and player5 != '2019 WNBA Players'):
 
-# if(player1 != '2020 NBA Players' and player2 != '2020 NBA Players' and player3 != '2020 NBA Players' and player4 != '2020 NBA Players' and player5 != '2020 NBA Players'): #current
-# if(len(playerlist) > 4 and len(playerlist) < 6):
     userdf = pd.DataFrame(playerlist)
     userdf['Player'] = userdf[0]
     userdf = userdf.drop([0], axis = 1)
     merged = userdf.merge(right = currentStats, on ='Player')
     merged['index'] = 0
-    # merged['index'] = 'lineup'
     merged.set_index('index')
-    # merged = merged.drop(['Player'], axis =1)
     dictionary = merged.groupby('index').apply(lambda dfg: dfg.drop('index', axis=1).to_dict(orient='list')).to_dict()
     converted = pd.DataFrame.from_dict(dictionary, orient= 'index')
     WNBA_converted = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
                         for i,col in converted.items()],axis = 1)
-    # WNBA_converted.index = converted.index
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='00')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='01')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='02')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='03')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='04')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='5')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='6')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='7')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='8')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='9')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='13')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='14')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='20')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='21')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='22')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='23')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='24')))]
-    # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='Player')))]
 
     st.write('Lineup DataFrame:')
     st.write(WNBA_converted)
 
-#     total_salary = new_df['Salary0'] + new_df['Salary1'] + new_df['Salary2']+ new_df['Salary3']+ new_df['Salary4']
-#     total_salary = int(total_salary)
-#     cap = 109140000
-#     tax = 132627000
-#     # tax_room = tax - cap
-#     percent = float(total_salary / cap)
-#     cap_left = cap - total_salary
-#     tax_left = tax - total_salary
-#     over_tax = total_salary - tax
-    
-#     salary_string = str(format(total_salary, ","))
-#     cap_left_string = str(format(cap_left, ","))
-#     over_tax_string = str(format(over_tax, ","))
-#     tax_left_string = str(format(tax_left, ","))
-#     if (percent < .5): 
-#         st.success('The total salary for this lineup is $'+ salary_string + ', leaving $' + cap_left_string + ' left to spend on the rest of the roster.')
-#     elif(percent < .99):
-#         st.warning('The total salary for this lineup is $' + salary_string + ', leaving $' + cap_left_string + ' left to spend on the rest of the roster.')
-#     elif(total_salary/tax > 1): 
-#         st.error('The total salary for this lineup is $' + salary_string + ', putting this team over the tax by  $' + over_tax_string + '.')
-#     else: 
-#         st.error('The total salary for this lineup is $' + salary_string + ', putting this team in the tax and leaving $' + tax_left_string + ' left to spend on the rest of the roster.')
+    #     total_salary = new_df['Salary0'] + new_df['Salary1'] + new_df['Salary2']+ new_df['Salary3']+ new_df['Salary4']
+    #     total_salary = int(total_salary)
+    #     cap = 109140000
+    #     tax = 132627000
+    #     # tax_room = tax - cap
+    #     percent = float(total_salary / cap)
+    #     cap_left = cap - total_salary
+    #     tax_left = tax - total_salary
+    #     over_tax = total_salary - tax
+
+    #     salary_string = str(format(total_salary, ","))
+    #     cap_left_string = str(format(cap_left, ","))
+    #     over_tax_string = str(format(over_tax, ","))
+    #     tax_left_string = str(format(tax_left, ","))
+    #     if (percent < .5): 
+    #         st.success('The total salary for this lineup is $'+ salary_string + ', leaving $' + cap_left_string + ' left to spend on the rest of the roster.')
+    #     elif(percent < .99):
+    #         st.warning('The total salary for this lineup is $' + salary_string + ', leaving $' + cap_left_string + ' left to spend on the rest of the roster.')
+    #     elif(total_salary/tax > 1): 
+    #         st.error('The total salary for this lineup is $' + salary_string + ', putting this team over the tax by  $' + over_tax_string + '.')
+    #     else: 
+    #         st.error('The total salary for this lineup is $' + salary_string + ', putting this team in the tax and leaving $' + tax_left_string + ' left to spend on the rest of the roster.')
 
     with st.spinner('Loading...'):
         import itertools
@@ -142,42 +109,18 @@ if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3
             userdf = userdf.drop([0], axis = 1)
             merged = userdf.merge(right = currentStats, on ='Player')
             merged['index'] = 0
-            # merged['index'] = 'lineup'
             merged.set_index('index')
-            # merged = merged.drop(['Player'], axis =1)
             dictionary = merged.groupby('index').apply(lambda dfg: dfg.drop('index', axis=1).to_dict(orient='list')).to_dict()
             converted = pd.DataFrame.from_dict(dictionary, orient= 'index')
             WNBA_converted = pd.concat([pd.DataFrame(col.tolist()).add_prefix(i) 
                                 for i,col in converted.items()],axis = 1)
-            # WNBA_converted.index = converted.index
             WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='Player')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='00')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='01')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='02')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='03')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='04')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='5')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='6')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='7')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='8')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='9')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='10')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='11')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='12')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='13')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='14')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='20')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='21')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='22')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='23')))]
-            # WNBA_converted = WNBA_converted[WNBA_converted.columns.drop(list(WNBA_converted.filter(regex='24')))]
-#             new_df = new_df[new_df.columns.drop(list(new_df.filter(regex='Salary')))]
             user_pred = model1.predict(WNBA_converted)
             num = int(user_pred)
             average.append(num)
 
 
-        
+
         if st.button('PREDICT'):
 
                 # with st.spinner('Predicting...'):
@@ -203,7 +146,6 @@ if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3
 
 
 st.video(data = 'https://www.youtube.com/watch?v=le3cMnQ7_74&feature=youtu.be')
-# st.markdown('_Currently the best lineup in the NBA (by at least 100 minutes played) is Paul/Gallinari/Schroder/Adams/Gilgeous-Alexander of the OKC Thunder. The NBA Net Rating Machine predicts this lineup with a Net Rating of 16.7. The bar has been set, can you beat it?_')
 st.markdown('_Presented by Neel Ganta._')
 
 st.sidebar.video(data = 'https://www.youtube.com/watch?v=le3cMnQ7_74&feature=youtu.be')
