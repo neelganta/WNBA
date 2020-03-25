@@ -135,7 +135,7 @@ if(player1 != '2019 WNBA Players' and player2 != '2019 WNBA Players' and player3
                 st.error("The predicted Net Rating for this lineup is " + string +".")
             elif (avg > 10 and avg < 20): 
                 st.success("The predicted Net Rating for this lineup is " + string +".")
-            elif (avg > 20):
+            elif (avg >= 20):
                 st.success("The predicted Net Rating for this lineup is " + string +".")
                 st.balloons()
             else:
